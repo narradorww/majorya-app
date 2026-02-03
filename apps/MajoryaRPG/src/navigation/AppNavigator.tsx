@@ -11,7 +11,6 @@ import { AdventuresScreen } from '../screens/gm/AdventuresScreen';
 import { NpcsScreen } from '../screens/gm/NpcsScreen';
 import { CreaturesScreen } from '../screens/gm/CreaturesScreen';
 import { MapsScreen } from '../screens/gm/MapsScreen';
-
 export type RootStackParamList = {
   Home: undefined;
   PlayerHome: undefined;
@@ -36,9 +35,10 @@ export function AppNavigator() {
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.textPrimary,
         contentStyle: { backgroundColor: colors.background },
+        headerShown: true,
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Majorya RPG' }} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="PlayerHome" component={PlayerHomeScreen} options={{ title: 'Jogador' }} />
       <Stack.Screen
         name="PlayerCharacterSheet"

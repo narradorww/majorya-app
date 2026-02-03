@@ -44,16 +44,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.lg,
     gap: spacing.md,
+    backgroundColor: colors.background,
   },
   title: {
     color: colors.textPrimary,
   },
   card: {
-    borderRadius: 12,
     padding: spacing.md,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.accent,
+    borderWidth: 2,
+    borderColor: colors.secondary,
   },
   cardPressed: {
     opacity: 0.9,

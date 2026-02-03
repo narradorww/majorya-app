@@ -1,14 +1,19 @@
 export const typography = {
+  fonts: {
+    heading: 'PressStart2P-Regular',
+    body: 'VT323-Regular',
+  },
   title: {
+    fontFamily: 'PressStart2P-Regular',
     fontSize: 24,
-    fontWeight: '700' as const,
+    // fontWeight is often ignored by custom pixel fonts
   },
   subtitle: {
-    fontSize: 18,
-    fontWeight: '600' as const,
+    fontFamily: 'PressStart2P-Regular',
+    fontSize: 16,
   },
   body: {
-    fontSize: 14,
-    fontWeight: '400' as const,
+    fontFamily: 'VT323-Regular',
+    fontSize: 16, // Increased base size for pixel art readability
   },
 };

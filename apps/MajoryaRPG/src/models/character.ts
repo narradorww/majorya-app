@@ -1,9 +1,13 @@
 import { AuditFields, Id, ISODateString } from './common';
 
-export type Attribute = {
-  key: string;
-  label: string;
-  value: number;
+export type AttributeKey = 'FOR' | 'INT' | 'CAR' | 'VIG' | 'AGI';
+
+export const ATTRIBUTES: Record<AttributeKey, string> = {
+  FOR: 'Força',
+  INT: 'Inteligência',
+  CAR: 'Carisma',
+  VIG: 'Vigor',
+  AGI: 'Agilidade',
 };
 
 export type Skill = {
@@ -34,11 +38,18 @@ export type Character = {
   id: Id;
   ownerId: Id;
   name: string;
-  className?: string;
+  className?: string; // Classe (Ex: Guerreiro, Mago - se houver no futuro)
   level?: number;
-  ancestry?: string;
-  background?: string;
-  attributes: Attribute[];
+  ancestry?: string; // Povo (Ex: Anão, Elfo)
+  background?: string; // Origem
+  
+  // Attributes (Fixed keys)
+  attributes: Record<AttributeKey, number>;
+  
+  // Vitals
+  hp: number;
+  maxHp: number; // Derived from VIG * 5 typically, but stored for overrides
+
   skills: Skill[];
   inventory: InventoryItem[];
   encounters: Encounter[];
