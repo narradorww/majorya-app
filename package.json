@@ -1,0 +1,23 @@
+{
+  "name": "majorya-app",
+  "version": "0.1.0",
+  "description": "Majorya RPG mobile app and backend services.",
+  "private": true,
+  "scripts": {
+    "mobile:install": "npm --prefix apps/MajoryaRPG install",
+    "mobile:ios": "npm --prefix apps/MajoryaRPG run ios",
+    "mobile:android": "npm --prefix apps/MajoryaRPG run android"
+  },
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "devDependencies": {
+    "@react-native-community/cli": "^20.0.0",
+    "@react-native/metro-config": "^0.83.1"
+  }
+}
