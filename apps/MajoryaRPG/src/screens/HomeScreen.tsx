@@ -1,16 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
-  Animated,
-  Dimensions,
-  Easing,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import Video from 'react-native-video';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
@@ -18,63 +14,9 @@ import { typography } from '../theme/typography';
 
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-const INTRO_HOLD_MS = 6000;
-const FADE_OUT_MS = 3000;
-const BANNER_HEIGHT = 540;
-
 export function HomeScreen({ navigation }: HomeScreenProps) {
   const [playerName, setPlayerName] = useState('');
   const [masterKey, setMasterKey] = useState('');
-  const [volume, setVolume] = useState(1);
-
-  const screenHeight = Dimensions.get('window').height;
-  const transition = useRef(new Animated.Value(0)).current;
-  const volumeAnim = useRef(new Animated.Value(1)).current;
-  const volumeListener = useRef<string | null>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      Animated.timing(transition, {
-        toValue: 1,
-        duration: FADE_OUT_MS,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }).start();
-
-      Animated.timing(volumeAnim, {
-        toValue: 0,
-        duration: FADE_OUT_MS,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }).start();
-    }, INTRO_HOLD_MS);
-
-    volumeListener.current = volumeAnim.addListener(({ value }) => {
-      setVolume(value);
-    });
-
-    return () => {
-      clearTimeout(timer);
-      if (volumeListener.current) {
-        volumeAnim.removeListener(volumeListener.current);
-      }
-    };
-  }, [transition, volumeAnim]);
-
-  const videoHeight = transition.interpolate({
-    inputRange: [0, 1],
-    outputRange: [screenHeight, BANNER_HEIGHT],
-  });
-
-  const loginOpacity = transition.interpolate({
-    inputRange: [0, 0.6, 1],
-    outputRange: [0, 0.2, 1],
-  });
-
-  const loginTranslateY = transition.interpolate({
-    inputRange: [0, 1],
-    outputRange: [60, 0],
-  });
 
   const handleLogin = () => {
     if (!playerName.trim()) return;
@@ -83,25 +25,13 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.videoContainer, { height: videoHeight }]}>
-        <Video
-          source={require('../assets/dragon_intro.mp4')}
-          style={styles.video}
-          resizeMode="contain"
-          repeat
-          volume={volume}
-          muted={false}
-          ignoreSilentSwitch="ignore"
-        />
-      </Animated.View>
+      {/* Header Placeholder since no snapshot exists */}
+      <View style={styles.header}>
+         <Text style={styles.headerTitle}>Majorya RPG</Text>
+      </View>
 
-      <Animated.View
-        style={[
-          styles.loginContainer,
-          { opacity: loginOpacity, transform: [{ translateY: loginTranslateY }] },
-        ]}
-      >
-        <Text style={styles.loginTitle}>Bem-vindo a Majória</Text>
+      <View style={styles.loginContainer}>
+        <Text style={styles.loginTitle}>Entrar na Sessão</Text>
         <TextInput
           style={styles.input}
           placeholder="Nome do jogador"
@@ -121,9 +51,9 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
           style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
           onPress={handleLogin}
         >
-          <Text style={styles.buttonText}>Entrar</Text>
+          <Text style={styles.buttonText}>Começar</Text>
         </Pressable>
-      </Animated.View>
+      </View>
     </View>
   );
 }
@@ -133,34 +63,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  videoContainer: {
-    width: '100%',
-    overflow: 'hidden',
-    backgroundColor: '#000000',
-  },
-  video: {
-    width: '100%',
-    height: '100%',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: 'center',
+  header: {
+    height: 200,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
-    padding: spacing.lg,
-    gap: spacing.md,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.primary,
+  },
+  headerTitle: {
+    ...typography.h1,
+    color: colors.primary,
+    fontFamily: 'Rye-Regular',
   },
   loginContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: spacing.lg,
     padding: spacing.lg,
     gap: spacing.md,
+    marginTop: spacing.xl,
   },
   title: {
     color: colors.textPrimary,
@@ -190,6 +109,7 @@ const styles = StyleSheet.create({
   loginTitle: {
     ...typography.subtitle,
     color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   input: {
     borderWidth: 2,

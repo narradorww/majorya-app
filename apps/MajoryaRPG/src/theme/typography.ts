@@ -12,6 +12,10 @@ export const typography = {
     fontFamily: 'PressStart2P-Regular',
     fontSize: 16,
   },
+  h1: {
+    fontFamily: 'PressStart2P-Regular',
+    fontSize: 32,
+  },
   body: {
     fontFamily: 'VT323-Regular',
     fontSize: 16, // Increased base size for pixel art readability

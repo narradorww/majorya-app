@@ -27,3 +27,7 @@ yarn-error.log*
 
 # Agent
 .agent
+
+# Firebase Credentials
+**/google-services.json
+**/GoogleService-Info.plist

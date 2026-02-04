@@ -1,14 +1,71 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaView, Dimensions, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Video from 'react-native-video';
 import { colors } from '../../theme/colors';
+import { spacing } from '../../theme/spacing';
+import { typography } from '../../theme/typography';
 import { authService } from '../../services/auth';
+
+const INTRO_HOLD_MS = 6000;
+const FADE_OUT_MS = 3000;
+const BANNER_HEIGHT = 200; // Adjusted for Login Screen
 
 export function LoginScreen() {
   const navigation = useNavigation<any>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [volume, setVolume] = useState(1);
+
+  const screenHeight = Dimensions.get('window').height;
+  const transition = useRef(new Animated.Value(0)).current;
+  const volumeAnim = useRef(new Animated.Value(1)).current;
+  const volumeListener = useRef<string | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      Animated.timing(transition, {
+        toValue: 1,
+        duration: FADE_OUT_MS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start();
+
+      Animated.timing(volumeAnim, {
+        toValue: 0,
+        duration: FADE_OUT_MS,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start();
+    }, INTRO_HOLD_MS);
+
+    volumeListener.current = volumeAnim.addListener(({ value }) => {
+      setVolume(value);
+    });
+
+    return () => {
+      clearTimeout(timer);
+      if (volumeListener.current) {
+        volumeAnim.removeListener(volumeListener.current);
+      }
+    };
+  }, [transition, volumeAnim]);
+
+  const videoHeight = transition.interpolate({
+    inputRange: [0, 1],
+    outputRange: [screenHeight, BANNER_HEIGHT],
+  });
+
+  const contentOpacity = transition.interpolate({
+    inputRange: [0, 0.6, 1],
+    outputRange: [0, 0.2, 1],
+  });
+
+  const contentTranslateY = transition.interpolate({
+    inputRange: [0, 1],
+    outputRange: [60, 0],
+  });
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -27,8 +84,27 @@ export function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <Animated.View style={[styles.videoContainer, { height: videoHeight }]}>
+        <Video
+          source={require('../../assets/dragon_intro.mp4')}
+          style={styles.video}
+          resizeMode="contain"
+          repeat
+          volume={volume}
+          muted={false}
+          ignoreSilentSwitch="ignore"
+        />
+        {/* Adds a gradient overlay for better text readability later if needed */}
+        <Animated.View style={[styles.overlay, { opacity: transition }]} /> 
+      </Animated.View>
+
+      <Animated.View
+        style={[
+          styles.content,
+          { opacity: contentOpacity, transform: [{ translateY: contentTranslateY }] },
+        ]}
+      >
         <Text style={styles.title}>Majorya RPG</Text>
         
         <Text style={styles.label}>E-mail</Text>
@@ -68,20 +144,34 @@ export function LoginScreen() {
         >
           <Text style={styles.linkText}>Não tem conta? Cadastre-se</Text>
         </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#000000',
+  },
+  videoContainer: {
+    width: '100%',
+    overflow: 'hidden',
+    backgroundColor: '#000000',
+  },
+  video: {
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: colors.background, // Ensure background is solid for form
   },
   title: {
     fontSize: 32,
