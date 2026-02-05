@@ -14,13 +14,16 @@ import { CreaturesScreen } from '../screens/gm/CreaturesScreen';
 import { MapsScreen } from '../screens/gm/MapsScreen';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
+import { ForgotPasswordScreen } from '../screens/auth/ForgotPasswordScreen';
 import { authService } from '../services/auth';
 import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { View, ActivityIndicator } from 'react-native';
 
 export type RootStackParamList = {
   Login: undefined;
+  Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
   Home: undefined;
   PlayerHome: undefined;
   PlayerCharacterSheet: undefined;
@@ -70,6 +73,7 @@ export function AppNavigator() {
         <>
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
         </>
       ) : (
         <>

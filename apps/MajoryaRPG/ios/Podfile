@@ -9,6 +9,8 @@ platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+# Required when using use_frameworks! with RNFirebase
+$RNFirebaseAsStaticFramework = true
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil

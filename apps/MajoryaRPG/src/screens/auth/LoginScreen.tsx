@@ -15,6 +15,7 @@ export function LoginScreen() {
   const navigation = useNavigation<any>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [volume, setVolume] = useState(1);
 
@@ -83,6 +84,20 @@ export function LoginScreen() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      await authService.signInWithGoogle();
+    } catch (error: any) {
+      // Ignore cancellation error
+      if (error.code !== '12501') { // 12501 is basic cancellation on Android often
+         Alert.alert('Erro no Login com Google', error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.videoContainer, { height: videoHeight }]}>
@@ -119,14 +134,29 @@ export function LoginScreen() {
         />
 
         <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite sua senha"
-          placeholderTextColor={colors.textSecondary}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Digite sua senha"
+            placeholderTextColor={colors.textSecondary}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity 
+            style={styles.eyeIcon} 
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Text style={{ fontSize: 20 }}>{showPassword ? '🙈' : '👁️'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity 
+          style={styles.forgotButton} 
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
+          <Text style={styles.forgotText}>Esqueci minha senha</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.button} 
@@ -136,6 +166,14 @@ export function LoginScreen() {
           <Text style={styles.buttonText}>
             {loading ? 'Entrando...' : 'Entrar'}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.googleButton} 
+          onPress={handleGoogleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.googleButtonText}>Entrar com Google</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -194,7 +232,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.secondary,
     fontFamily: 'Lato-Regular',
   },
   button: {
@@ -210,6 +248,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },
+  googleButton: {
+    backgroundColor: '#DB4437',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#DB4437',
+  },
+  googleButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'Lato-Bold',
+  },
   linkButton: {
     marginTop: 20,
     alignItems: 'center',
@@ -218,5 +271,33 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     fontSize: 14,
     fontFamily: 'Lato-Regular',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: colors.secondary,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    color: colors.textPrimary,
+    fontFamily: 'Lato-Regular',
+  },
+  eyeIcon: {
+    padding: 10,
+  },
+  forgotButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+  },
+  forgotText: {
+    color: colors.secondary,
+    fontSize: 14,
+    fontFamily: 'Lato-Regular',
+    textDecorationLine: 'underline',
   },
 });

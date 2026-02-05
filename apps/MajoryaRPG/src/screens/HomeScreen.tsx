@@ -11,6 +11,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
+import { authService } from '../services/auth';
 
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -23,11 +24,28 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
     navigation.navigate('PlayerHome');
   };
 
+  const handleLogout = async () => {
+    try {
+      await authService.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const userEmail = authService.getCurrentUser()?.email;
+
   return (
     <View style={styles.container}>
       {/* Header Placeholder since no snapshot exists */}
       <View style={styles.header}>
          <Text style={styles.headerTitle}>Majorya RPG</Text>
+         {userEmail && <Text style={styles.subtitle}>{userEmail}</Text>}
+         <Pressable
+           style={({ pressed }) => [styles.logoutButton, pressed && styles.buttonPressed]}
+           onPress={handleLogout}
+         >
+           <Text style={styles.logoutText}>Sair</Text>
+         </Pressable>
       </View>
 
       <View style={styles.loginContainer}>
@@ -119,5 +137,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     ...typography.body,
     color: colors.ctaText,
+  },
+  logoutButton: {
+    position: 'absolute',
+    right: 20,
+    top: 50,
+    padding: 8,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 8,
+  },
+  logoutText: {
+    color: colors.primary,
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
 });
